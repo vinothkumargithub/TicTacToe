@@ -1,3 +1,12 @@
+/**
+ * IMinimax.java
+ * Author: Yu-Lin Yang
+ * Created for 8th Light Coding Challenge
+ * 
+ * Description: Foundation of the required methods in order
+ *  for a game state to be compatible for Minimax algorithm
+ *  with alpha-beta pruning.
+ */
 public interface IMinimax {
     public boolean isTerminal();
     public Object[] getSuccessors(char symbol);

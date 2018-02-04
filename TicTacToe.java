@@ -1,5 +1,15 @@
 /**
- * TicTacToe game made for 8th Light Coding challenge
+ * TicTacToe.java
+ * Author: Yu-Lin Yang
+ * Created for 8th Light Coding Challenge
+ * 
+ * Description: This is the driver class for the TicTacToe game.
+ * Requires: TTTBoard.java as that file serves
+ *  as the board to be played on as well as
+ *  the implementation of the AI.
+ * 
+ * To run: "javac TicTacToe.java TTTBoard.java" followed by
+ *         "java TicTacToe"
  */
 import java.util.Scanner;
 import java.util.Arrays;
@@ -25,7 +35,7 @@ public class TicTacToe {
    * Index 2: 1 = Play as X; 2 = Play as O
    */
   private static int[] config = new int[3];
-  private static Board board;
+  private static TTTBoard board;
 
   public static Scanner input = new Scanner(System.in); // the input Scanner
   private static boolean p1turn; // true if player 1's turn
@@ -36,7 +46,7 @@ public class TicTacToe {
     //  COMMENTED OUT FOR DEBUGGING PURPOSES2
     initGame();
     //config[0] = 2; config[1] = 2; config[2] = 1;
-    board = new Board();
+    board = new TTTBoard();
     startGame();
 
     System.out.print("Game over\n");
@@ -135,7 +145,7 @@ public class TicTacToe {
     char p1 = config[2] == 1 ? 'X' : 'O';
     char cpu = config[2] == 1 ? 'O' : 'X';
     p1turn = config[1] == 1;
-    if(!p1turn) {
+    if(!p1turn) { // If CPU first, make random move for variety.
       getCPURandomSpot(cpu);
       p1turn = !p1turn;
     }
@@ -158,7 +168,7 @@ public class TicTacToe {
     char cpu1 = 'X';
     char cpu2 = 'O';
     boolean cpu1turn = false;
-    getCPURandomSpot(cpu1);
+    getCPURandomSpot(cpu1); // Allow random starts.
     do {
       if(cpu1turn)
         getCPUSpot(cpu1);
@@ -194,8 +204,8 @@ public class TicTacToe {
   }
   private static void getCPUSpot(char symbol) {
     board.run_with_pruning(board, symbol);
-    if(Board.nextState != null) {
-      Board temp = Board.nextState;
+    if(TTTBoard.nextState != null) {
+      TTTBoard temp = TTTBoard.nextState;
       temp.prevBoard = board.currBoard;
       board = temp;
       printBoard();
@@ -213,7 +223,7 @@ public class TicTacToe {
     String output = "";
     output += "*---------------Tic-Tac-Toe---------------*\n";
     output += "Enter [1-9] for the corresponding position:\n";
-    output += Board.printBoard(placeholderBoard);
+    output += TTTBoard.printBoard(placeholderBoard);
     output += "Press Q at any time to quit game.\n";
     output += "\nPrevious board:\n" + board.printPrevBoard();
     output += "\nCurrent board:\n"  + board.printCurrBoard();
