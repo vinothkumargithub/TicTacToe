@@ -15,47 +15,40 @@ import java.util.Scanner;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Tic-Tac-Toe: Two-player console version.
  */
 public class TicTacToe {
-  public TicTacToe() {
-
-  }
+  public TicTacToe() {}
   // The game board and the game status
-  public static char[] placeholderBoard = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
-  public static int currentState;  // the current state of the game
-  public static String currentPlayer; // the current player
+  public final char[] placeholderBoard = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+  
   /**
    * config definition
    * Index 0: 1 = PvP; 2 = PvC; 3 = CvC
    * Index 1: 1 = Go first; 2 = Go second
    * Index 2: 1 = Play as X; 2 = Play as O
    */
-  private static int[] config = new int[3];
-  private static TTTBoard board;
+  public int[] config = new int[3];
+  public TTTBoard board;
 
-  public static Scanner input = new Scanner(System.in); // the input Scanner
-  private static boolean p1turn; // true if player 1's turn
+  public Scanner input = new Scanner(System.in); // the input Scanner
+  public boolean p1turn; // true if player 1's turn
   
   /** The entry main method (the program starts here) */
   public static void main(String[] args) {
     // Initialize the game-board and current status
-    //  COMMENTED OUT FOR DEBUGGING PURPOSES2
-    initGame();
-    //config[0] = 2; config[1] = 2; config[2] = 1;
-    board = new TTTBoard();
-    startGame();
-
-    System.out.print("Game over\n");
+    TicTacToe ttt = new TicTacToe();
+    if(ttt.initGame())
+      ttt.startGame();
   }
   /** Initializes the game */
-  private static void initGame() {
-
+  public boolean initGame() {
+    System.out.println("~Welcome to Tic-Tac-Toe~");
     boolean validInput = false;
     do {
+      System.out.println("Please select game option:");
       System.out.println("[1] for Player vs Player\n[2] for Player vs Computer\n[3] for Computer vs Computer");
       System.out.print("User Input: ");
       if(input.hasNextInt()) {
@@ -78,6 +71,7 @@ public class TicTacToe {
       // Go first or second?
       validInput = false;
       do {
+        System.out.println("Would you like to go first or second?");
         System.out.println("[1] to go first\n[2] to go second");
         System.out.print("User Input: ");
         if(input.hasNextInt()) {
@@ -97,6 +91,7 @@ public class TicTacToe {
       // X or O?
       validInput = false;
       do {
+        System.out.println("Would you like to play as X's or O's?");
         System.out.println("[1] to play as X's\n[2] to play as O's");
         System.out.print("User Input: ");
         if(input.hasNextInt()) {
@@ -114,19 +109,21 @@ public class TicTacToe {
       } while (!validInput);
     }
 
-    // currentState = 0; // "playing" or ready to play
-    // currentPlayer = "X";  // cross plays first
+    //Instantiate board
+    board = new TTTBoard();
+    return true;
   }
 
-  private static void startGame() {
+  public void startGame() {
     switch(config[0]) {
       case 1: startPvP(); break;
       case 2: startPvC(); break;
       case 3: startCvC(); break;
       default: throw new RuntimeException("Game Selection Failed");
     }
+    System.out.print("Game over. Thanks for playing. \n");
   }
-  private static void startPvP() {
+  public void startPvP() {
     char p1 = config[2] == 1 ? 'X' : 'O';
     char p2 = config[2] == 1 ? 'O' : 'X';
     p1turn = config[1] == 1;
@@ -141,7 +138,7 @@ public class TicTacToe {
     else
       System.out.println("Game ended in a draw.");
   }
-  private static void startPvC() {
+  private void startPvC() {
     char p1 = config[2] == 1 ? 'X' : 'O';
     char cpu = config[2] == 1 ? 'O' : 'X';
     p1turn = config[1] == 1;
@@ -164,7 +161,7 @@ public class TicTacToe {
       System.out.println("Game ended in a draw.");
 
   }
-  private static void startCvC() {
+  private void startCvC() {
     char cpu1 = 'X';
     char cpu2 = 'O';
     boolean cpu1turn = false;
@@ -182,7 +179,7 @@ public class TicTacToe {
       System.out.println("Game ended in a draw.");
   }
 
-  public static void getHumanSpot(char symbol) {
+  public void getHumanSpot(char symbol) {
     boolean validInput = false;
     do {
       System.out.printf("Player %d's turn now.\n", p1turn ? 1 : 2);
@@ -202,7 +199,8 @@ public class TicTacToe {
       }
     } while (!validInput);
   }
-  private static void getCPUSpot(char symbol) {
+  public void getCPUSpot(char symbol) {
+    cpuDelay();
     board.run_with_pruning(board, symbol);
     if(TTTBoard.nextState != null) {
       TTTBoard temp = TTTBoard.nextState;
@@ -210,21 +208,32 @@ public class TicTacToe {
       board = temp;
       printBoard();
     }
+    else
+      throw new RuntimeException("CPU can't find next position.");
   }
 
-  private static void getCPURandomSpot(char symbol) {
+  public void getCPURandomSpot(char symbol) {
+    cpuDelay();
     Random rn = new Random();
     int spot = rn.nextInt(9);
     board.move(spot, symbol);
     printBoard();
   }
+  public void cpuDelay() {
+    try {
+      System.out.println("Computer thinking...");
+      Random rn = new Random();
+      Thread.sleep(rn.nextInt(1000)+500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
 
-  public static void printBoard() {
+  public void printBoard() {
     String output = "";
     output += "*---------------Tic-Tac-Toe---------------*\n";
     output += "Enter [1-9] for the corresponding position:\n";
     output += TTTBoard.printBoard(placeholderBoard);
-    output += "Press Q at any time to quit game.\n";
     output += "\nPrevious board:\n" + board.printPrevBoard();
     output += "\nCurrent board:\n"  + board.printCurrBoard();
     output += "*---------------Tic-Tac-Toe---------------*\n";
@@ -232,7 +241,7 @@ public class TicTacToe {
   }
 
   /** Return true if the game was just won */
-  public static boolean gameIsOver() {
+  public boolean gameIsOver() {
     return board.currBoard[0] == board.currBoard[1] && board.currBoard[1] == board.currBoard[2] ||
       board.currBoard[3] == board.currBoard[4] && board.currBoard[4] == board.currBoard[5] ||
       board.currBoard[6] == board.currBoard[7] && board.currBoard[7] == board.currBoard[8] ||
@@ -244,7 +253,7 @@ public class TicTacToe {
   }
 
   /** Return true if it is a draw (no more empty cell) */
-  public static boolean tie() {
+  public boolean tie() {
     for(int i = 0; i < board.currBoard.length; ++i)
       if(board.currBoard[i] == (char) (i+'0') ) return false;
     return true;

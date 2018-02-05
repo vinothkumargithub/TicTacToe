@@ -18,7 +18,7 @@ public class TTTBoard implements IBoard, IMinimax {
         }
     }
     // For minimax score construction
-    private TTTBoard(char[] arr) {
+    public TTTBoard(char[] arr) {
         this.currBoard = Arrays.copyOf(arr, arr.length);
     }
     public char[] currBoard;
@@ -34,7 +34,7 @@ public class TTTBoard implements IBoard, IMinimax {
     public String printCurrBoard() {
         return printThisBoard(currBoard);
     }
-    private String printThisBoard(char[] board) {
+    public String printThisBoard(char[] board) {
         char[] tempBoard = new char[9];
         System.arraycopy( board, 0, tempBoard, 0, tempBoard.length );
         for(int i  = 0; i < tempBoard.length; ++i)
